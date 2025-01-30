@@ -1,3 +1,8 @@
+        /*
+引用地址：https://raw.githubusercontent.com/RuCu6/Loon/main/Scripts/weibo.js
+*/
+// 2024-12-17 10:45
+
 const url = $request.url;
 if (!$response) $done({});
 if (!$response.body) $done({});
@@ -292,8 +297,7 @@ if (item?.user?.icons) {
       obj.items = newItems;
     }
   } else if (url.includes("/2/groups/allgroups/v2")) {
-    // 顶部tab 
-// 消息动态页
+  // 消息动态页
     if (obj?.messages?.length > 0) {
       let newMsgs = [];
       for (let msg of obj.messages) {
@@ -331,89 +335,6 @@ if (item?.user?.icons) {
     if (obj?.loadedInfo?.follow_guide_info) {
       delete obj.loadedInfo.follow_guide_info; // 个人主页关注弹窗
     }
-    // 个人主页信息流
-    if (obj?.items?.length > 0) {
-      let newItems = [];
-      for (let item of obj.items) {
-        if (item?.data?.left_hint?.[0]?.content === "全部微博(0)" && item?.data?.card_type === 216) {
-          // 全部微博为0的博主
-          break;
-        } else if (/内容/.test(item?.data?.name) && item?.data?.card_type === 58) {
-          // 个人微博页刷完后的推荐微博
-          break;
-        } else {
-          if (item?.category === "card") {
-            // 58微博展示时间段提示 216筛选按钮
-            if ([58, 216]?.includes(item?.data?.card_type)) {
-              if (/没有公开博文，为你推荐以下精彩内容/.test(item?.data?.name)) {
-                // 个人微博页刷完后的推荐信息流
-                continue;
-              }
-            }
-            newItems.push(item);
-          } else if (item?.category === "group") {
-            // 遍历group,保留置顶微博
-            if (item?.header?.data?.icon) {
-              delete item.header.data.icon; // 置顶微博背景图
-            }
-
-            if (item?.itemId?.includes("INTEREST_PEOPLE")) {
-              // 可能感兴趣的人
-              continue;
-            }
-            if (item?.profile_type_id === "weibo_cardpics") {
-              // 近期热门 精选微博 那年今日等横版内容
-              continue;
-            }
-            if (item?.items?.length > 0) {
-              let newII = [];
-              for (let ii of item.items) {
-                if (ii?.category === "feed") {
-                  removeAvatar(ii?.data); // 头像挂件,关注按钮
-                  removeFeedAd(ii?.data); // 信息流推广
-                  removeVoteInfo(ii?.data); // 投票窗口
-                  // 评论指引
-                  if (ii?.data?.enable_comment_guide) {
-                    ii.data.enable_comment_guide = false;
-                  }
-                  newII.push(ii);
-                } else if (ii?.category === "card") {
-                  if ([10, 48, 176]?.includes(ii?.data?.card_type)) {
-                    // 最近关注与互动过的博主
-                    continue;
-                  }
-                  if (ii?.data?.rightImage) {
-                    delete ii.data.rightImage; // 新版置顶微博皇冠
-                  }
-                  if (ii?.data?.backgroundImage) {
-                    delete ii.data.backgroundImage; // 新版置顶微博背景图
-                  }
-                  newII.push(ii);
-                }
-              }
-              item.items = newII;
-            }
-            newItems.push(item);
-          } else if (item?.category === "feed") {
-            if (!isAd(item?.data)) {
-              removeFeedAd(item?.data); // 信息流推广
-              removeVoteInfo(item?.data); // 投票窗口
-              if (item?.data?.source?.includes("生日动态")) {
-                // 移除生日祝福微博
-                continue;
-              }
-              if (item?.data?.title?.text !== "热门" && item?.data?.title?.structs?.length > 0) {
-                // 移除赞过的微博 保留热门内容
-                continue;
-              }
-              newItems.push(item);
-            }
-          }
-        }
-      }
-      obj.items = newItems;
-    }
-  } else if (url.includes("/2/profile/dealatt") || url.includes("/2/friendships/")) {
     // 个人主页点击关注后展示菜单
     if (obj?.cards?.length > 0) {
       obj.cards = []; // 相关推荐卡片
@@ -605,177 +526,6 @@ if (item?.user?.icons) {
     if (obj?.disable_floating_window) {
       obj.disable_floating_window = "1";
     }
-    // 首页右上角红包图标
-    if (obj?.feed_redpacket) {
-      obj.feed_redpacket.starttime = "2208960000";
-      obj.feed_redpacket.interval = "31536000";
-      obj.feed_redpacket.endtime = "2209046399";
-      if (obj?.feed_redpacket?.finish_icon) {
-        delete obj.feed_redpacket.finish_icon;
-      }
-      if (obj?.feed_redpacket?.guide) {
-        delete obj.feed_redpacket.guide;
-      }
-      if (obj?.feed_redpacket?.icon) {
-        delete obj.feed_redpacket.icon;
-      }
-      if (obj?.feed_redpacket?.pre_icon) {
-        delete obj.feed_redpacket.pre_icon;
-      }
-    }
-    if (obj?.floating_window_for_live_streaming) {
-      obj.floating_window_for_live_streaming = false;
-    }
-    if (obj?.floating_window_show_interval) {
-      obj.floating_window_show_interval = 31536000;
-    }
-    if (obj?.floating_windows?.length > 0) {
-      obj.floating_windows = obj.floating_windows.filter((i) => !/(?:^ad_?|red_pocket|ug_high_priority)/.test(i?.subtype));
-    }
-  } else if (url.includes("/2/search/")) {
-    // 搜索页信息流
-    if (url.includes("container_timeline")) {
-      if (obj?.loadedInfo) {
-        delete obj.loadedInfo;
-      }
-      if (obj?.items?.length > 0) {
-        let newItems = [];
-        for (let item of obj.items) {
-          if (item?.category === "feed") {
-            if (!isAd(item?.data)) {
-              removeFeedAd(item?.data); // 信息流推广
-              newItems.push(item);
-            }
-          } else if (item?.category === "card") {
-            // 19热议等tab 22商业推广 118横版广告图片 206,249横版视频广告 208实况热聊 217错过了热词 236微博趋势 261奥运滚动横幅
-            if ([19, 22, 118, 206, 208, 217, 236, 249, 261]?.includes(item?.data?.card_type)) {
-              continue;
-            } else if (item?.data?.itemid === "ads_slide") {
-              // 商业推广 主图 附图
-              continue;
-            } else if (item?.data?.cate_id === "1114") {
-              // 微博趋势标题
-              continue;
-            } else if (item?.data.hasOwnProperty("rank")) {
-              // 奥运等排行榜
-              continue;
-            } else {
-              newItems.push(item);
-            }
-          } else if (item?.category === "cell") {
-            // 保留信息流分割线
-            newItems.push(item);
-          } else if (item?.category === "group") {
-            if (item?.items?.length > 0) {
-              let newII = [];
-              for (let ii of item.items) {
-                // 118横版广告图片 182热议话题 217错过了热词 247横版视频广告 264微博趋势
-                if ([118, 182, 192, 217, 247, 264]?.includes(ii?.data?.card_type)) {
-                  continue;
-                } else if (ii?.data?.cate_id === "1114") {
-                  // 微博趋势
-                  continue;
-                } else {
-                  newII.push(ii);
-                }
-              }
-              item.items = newII;
-            }
-            newItems.push(item);
-          }
-        }
-        obj.items = newItems;
-      }
-    } else if (url.includes("finder")) {
-      if (obj?.channelInfo?.channels?.length > 0) {
-        let newChannels = [];
-        for (let channel of obj.channelInfo.channels) {
-          // 顶部标签栏 白名单
-          if (["band_channel", "discover_channel", "trends_channel"]?.includes(channel?.key)) {
-            let payload = channel.payload;
-            if (payload) {
-              if (payload?.loadedInfo) {
-                // 去除搜索框填充词
-                if (payload?.loadedInfo?.searchBarContent?.length > 0) {
-                  payload.loadedInfo.searchBarContent = [];
-                }
-                if (payload?.loadedInfo?.headerBack?.channelStyleMap) {
-                  delete payload.loadedInfo.headerBack.channelStyleMap; // 去除搜索背景图片
-                }
-                if (payload?.loadedInfo?.searchBarStyleInfo) {
-                  delete payload.loadedInfo.searchBarStyleInfo; // 搜索框样式
-                }
-              }
-              if (payload?.items?.length > 0) {
-                let newItems = [];
-                for (let item of payload.items) {
-                  if (item?.category === "feed") {
-                    if (!isAd(item?.data)) {
-                      removeFeedAd(item.data); // 信息流推广
-                      newItems.push(item);
-                    }
-                  } else if (item?.category === "card") {
-                    // 19热议等tab 22商业推广 118横版广告图片 206,249横版视频广告 208实况热聊 217错过了热词 236微博趋势 261奥运滚动横幅
-                    if ([19, 22, 118, 206, 208, 217, 236, 249, 261]?.includes(item?.data?.card_type)) {
-                      continue;
-                    } else if (item?.data?.itemid === "ads_slide") {
-                      // 商业推广 主图 附图
-                      continue;
-                    } else if (item?.data?.cate_id === "1114") {
-                      // 微博趋势标题
-                      continue;
-                    } else if (item?.data.hasOwnProperty("rank")) {
-                      // 奥运等排行榜
-                      continue;
-                    } else {
-                      newItems.push(item);
-                    }
-                  } else if (item?.category === "cell") {
-                    // 保留信息流分割线
-                    newItems.push(item);
-                  } else if (item?.category === "group") {
-                    if (item?.items?.length > 0) {
-                      let newII = [];
-                      for (let ii of item.items) {
-                        // 118横版广告图片 182热议话题 192横版好看视频 217错过了热词 247横版视频广告 264微博趋势
-                        if ([118, 182, 192, 217, 247, 264]?.includes(ii?.data?.card_type)) {
-                          continue;
-                        } else if (ii?.data?.cate_id === "1114") {
-                          // 微博趋势
-                          continue;
-                        } else {
-                          newII.push(ii);
-                        }
-                      }
-                      item.items = newII;
-                    }
-                    newItems.push(item);
-                  }
-                }
-                payload.items = newItems;
-              }
-            }
-            newChannels.push(channel);
-          } else {
-            continue;
-
-         }
-        }
-        obj.channelInfo.channels = newChannels;
-      }
-    }
-  } else if (url.includes("/2/searchall")) {
-    if (obj?.header?.data) {
-      // 商品推广头部淘宝跳转
-      const items = ["bg_img", "background_scheme", "background_url"];
-      for (let i of items) {
-        delete obj.header.data[i];
-      }
-    }
-    if (obj?.loadedInfo?.serviceMap?.layer) {
-      delete obj.loadedInfo.serviceMap.layer; // 搜索结果 悬浮窗
-    }
-    if (obj?.footer) {
       // 讨论区动画
       if (obj?.footer?.data?.bg_lottie) {
         delete obj.footer.data.bg_lottie;
@@ -877,7 +627,6 @@ if (item?.user?.icons) {
       for (let item of obj.items) {
         if (!isAd(item?.data)) {
           if (item?.category === "feed") {
-            removeFeedAd(item?.data); // 信息流推广
             removeVoteInfo(item?.data); // 投票窗口
             newItems.push(item);
           } else if (item?.category === "group") {
@@ -922,60 +671,7 @@ if (item?.user?.icons) {
       obj.items = obj.items.filter((i) => i?.data?.card_type !== 1007);
     }
   } else if (url.includes("/2/statuses/container_timeline_hot") || url.includes("/2/statuses/unread_hot_timeline")) {
-    // 首页推荐tab信息流
-    for (let s of ["ad", "advertises", "trends", "headers"]) {
-      if (obj?.[s]) {
-        delete obj[s];
-      }
-    }
-    if (obj?.items?.length > 0) {
-      let newItems = [];
-      for (let item of obj.items) {
-        if (!isAd(item?.data)) {
-          if (item?.category === "feed") {
-            removeFeedAd(item?.data); // 信息流推广
-            removeVoteInfo(item?.data); // 投票窗口
-            newItems.push(item);
-          } else {
-            // 移除其他推广
-            continue;
-          }
-        }
-      }
-      obj.items = newItems;
-    }
-    if (obj?.statuses?.length > 0) {
-      let newStatuses = [];
-      for (let item of obj.statuses) {
-        if (!isAd(item)) {
-          removeFeedAd(item); // 信息流推广
-          newStatuses.push(item);
-        }
-      }
-      obj.statuses = newStatuses;
-    }
-  } else if (url.includes("/2/statuses/container_timeline?") || url.includes("/2/statuses/container_timeline_unread")) {
-    if (obj?.loadedInfo?.headers) {
-      delete obj.loadedInfo.headers; // 首页关注tab信息流
-    }
-    if (obj?.common_struct) {
-
-      delete obj.common_struct; // 商品橱窗
-    }
-    if (obj?.items?.length > 0) {
-      let newItems = [];
-      for (let item of obj.items) {
-        if (!isAd(item?.data)) {
-          if (item?.category === "feed") {
-            if (item?.data?.action_button_icon_dic) {
-              delete item.data.action_button_icon_dic;
-            }
-            removeFeedAd(item?.data); // 信息流推广
-            removeVoteInfo(item?.data); // 投票窗口
-            if (item.data?.title?.structs) {
-              // 移除 未关注人消息 (你关注的博主，他自己关注的别的博主的微博消息)
-              continue;
-            }
+            
             // 快转内容
             if (item?.data?.screen_name_suffix_new?.length > 0) {
               if (item?.data?.screen_name_suffix_new?.[3]?.content === "快转了") {
