@@ -1,8 +1,3 @@
-        /*
-引用地址：https://raw.githubusercontent.com/RuCu6/Loon/main/Scripts/weibo.js
-*/
-// 2024-12-17 10:45
-
 const url = $request.url;
 if (!$response) $done({});
 if (!$response.body) $done({});
@@ -297,7 +292,8 @@ if (item?.user?.icons) {
       obj.items = newItems;
     }
   } else if (url.includes("/2/groups/allgroups/v2")) {
-    // 消息动态页
+    // 顶部tab 
+// 消息动态页
     if (obj?.messages?.length > 0) {
       let newMsgs = [];
       for (let msg of obj.messages) {
@@ -335,7 +331,89 @@ if (item?.user?.icons) {
     if (obj?.loadedInfo?.follow_guide_info) {
       delete obj.loadedInfo.follow_guide_info; // 个人主页关注弹窗
     }
-            (url.includes("/2/profile/dealatt") || url.includes("/2/friendships/")) {
+    // 个人主页信息流
+    if (obj?.items?.length > 0) {
+      let newItems = [];
+      for (let item of obj.items) {
+        if (item?.data?.left_hint?.[0]?.content === "全部微博(0)" && item?.data?.card_type === 216) {
+          // 全部微博为0的博主
+          break;
+        } else if (/内容/.test(item?.data?.name) && item?.data?.card_type === 58) {
+          // 个人微博页刷完后的推荐微博
+          break;
+        } else {
+          if (item?.category === "card") {
+            // 58微博展示时间段提示 216筛选按钮
+            if ([58, 216]?.includes(item?.data?.card_type)) {
+              if (/没有公开博文，为你推荐以下精彩内容/.test(item?.data?.name)) {
+                // 个人微博页刷完后的推荐信息流
+                continue;
+              }
+            }
+            newItems.push(item);
+          } else if (item?.category === "group") {
+            // 遍历group,保留置顶微博
+            if (item?.header?.data?.icon) {
+              delete item.header.data.icon; // 置顶微博背景图
+            }
+
+            if (item?.itemId?.includes("INTEREST_PEOPLE")) {
+              // 可能感兴趣的人
+              continue;
+            }
+            if (item?.profile_type_id === "weibo_cardpics") {
+              // 近期热门 精选微博 那年今日等横版内容
+              continue;
+            }
+            if (item?.items?.length > 0) {
+              let newII = [];
+              for (let ii of item.items) {
+                if (ii?.category === "feed") {
+                  removeAvatar(ii?.data); // 头像挂件,关注按钮
+                  removeFeedAd(ii?.data); // 信息流推广
+                  removeVoteInfo(ii?.data); // 投票窗口
+                  // 评论指引
+                  if (ii?.data?.enable_comment_guide) {
+                    ii.data.enable_comment_guide = false;
+                  }
+                  newII.push(ii);
+                } else if (ii?.category === "card") {
+                  if ([10, 48, 176]?.includes(ii?.data?.card_type)) {
+                    // 最近关注与互动过的博主
+                    continue;
+                  }
+                  if (ii?.data?.rightImage) {
+                    delete ii.data.rightImage; // 新版置顶微博皇冠
+                  }
+                  if (ii?.data?.backgroundImage) {
+                    delete ii.data.backgroundImage; // 新版置顶微博背景图
+                  }
+                  newII.push(ii);
+                }
+              }
+              item.items = newII;
+            }
+            newItems.push(item);
+          } else if (item?.category === "feed") {
+            if (!isAd(item?.data)) {
+              removeFeedAd(item?.data); // 信息流推广
+              removeVoteInfo(item?.data); // 投票窗口
+              if (item?.data?.source?.includes("生日动态")) {
+                // 移除生日祝福微博
+                continue;
+              }
+              if (item?.data?.title?.text !== "热门" && item?.data?.title?.structs?.length > 0) {
+                // 移除赞过的微博 保留热门内容
+                continue;
+              }
+              newItems.push(item);
+            }
+          }
+        }
+      }
+      obj.items = newItems;
+    }
+  } else if (url.includes("/2/profile/dealatt") || url.includes("/2/friendships/")) {
     // 个人主页点击关注后展示菜单
     if (obj?.cards?.length > 0) {
       obj.cards = []; // 相关推荐卡片
