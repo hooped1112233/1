@@ -9,6 +9,8 @@ hostname= *.weibo.cn,*.weibo.com,weibo.com
 DOMAIN-SUFFIX,uve.weibo.com,DIRECT
 DOMAIN-SUFFIX,uve.weibo.com,DIRECT
 DOMAIN-SUFFIX,uve.weibo.com,DIRECT
+[Rewrite]
+^https:\/\/api\.weibo\.cn\/2\/(?:ug\/checkin\/list|push\/daily) reject-dict
 [Script]
 http-response ^https:\/\/api\.weibo\.cn\/2\/(?:checkin\/show|client\/publisher_list|push\/active) script-path=https://kelee.one/Resource/Script/Weibo/Weibo_remove_ads.js, requires-body=true, tag=移除首页推广
 http-response ^https:\/\/api\.weibo\.cn\/2\/profile\/(?:container_timeline|dealatt|me|statuses\/tab|userinfo) script-path=https://kelee.one/Resource/Script/Weibo/Weibo_remove_ads.js, requires-body=true, tag=移除个人主页广告
