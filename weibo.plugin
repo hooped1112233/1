@@ -8,7 +8,6 @@ hostname= *.weibo.cn,*.weibo.com,weibo.com
 DOMAIN-SUFFIX,uve.weibo.com,DIRECT
 DOMAIN-SUFFIX,uve.weibo.com,DIRECT
 [Script]
-http-response ^https:\/\/api\.weibo\.cn\/2\/(?:checkin\/show|client\/publisher_list|push\/active) script-path=https://raw.githubusercontent.com/hooped1112233/1/refs/heads/main/yinyong.js, requires-body=true, tag=移除首页推广（没用）
 http-response ^https:\/\/api\.weibo\.cn\/2\/profile\/(?:container_timeline|dealatt|me|statuses\/tab|userinfo) script-path=https://raw.githubusercontent.com/hooped1112233/1/refs/heads/main/yinyong.js, requires-body=true, tag=移除个人主页广告
 http-response ^https:\/\/api\.weibo\.cn\/2\/(?:cardlist|page) script-path=https://raw.githubusercontent.com/hooped1112233/1/refs/heads/main/yinyong.js, requires-body=true, tag=移除信息流广告
 http-response ^https:\/\/api\.weibo\.cn\/2\/comments\/build_comments\? script-path=https://raw.githubusercontent.com/hooped1112233/1/refs/heads/main/yinyong.js, requires-body=true, tag=移除评论区广告
