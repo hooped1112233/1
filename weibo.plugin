@@ -1,8 +1,7 @@
 #!name=微博去广告
 #!desc=【移除首页顶部标签】不选
 #!homepage=loon可莉
-#!author=I
-#!icon=https://raw.githubusercontent.com/deezertidal/private/main/icons/meituxx.png
+#!author=抹茶
 [MITM]
 hostname= *.weibo.cn,*.weibo.com,weibo.com
 [Rule]
