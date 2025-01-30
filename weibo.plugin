@@ -6,10 +6,8 @@
 hostname= *.weibo.cn,*.weibo.com,weibo.com
 [Rule]
 DOMAIN-SUFFIX,uve.weibo.com,DIRECT
-DOMAIN-SUFFIX,uve.weibo.com,DIRECT
 [Script]
 http-response ^https:\/\/api\.weibo\.cn\/2\/profile\/(?:container_timeline|dealatt|me|statuses\/tab|userinfo) script-path=https://raw.githubusercontent.com/hooped1112233/1/refs/heads/main/yinyong.js, requires-body=true, tag=移除个人主页广告
-http-response ^https:\/\/api\.weibo\.cn\/2\/(?:cardlist|page) script-path=https://raw.githubusercontent.com/hooped1112233/1/refs/heads/main/yinyong.js, requires-body=true, tag=移除信息流广告
 http-response ^https:\/\/api\.weibo\.cn\/2\/comments\/build_comments\? script-path=https://raw.githubusercontent.com/hooped1112233/1/refs/heads/main/yinyong.js, requires-body=true, tag=移除评论区广告
 http-response ^https:\/\/api\.weibo\.cn\/2\/(?:container\/asyn|flowlist|flowpage) script-path=https://raw.githubusercontent.com/hooped1112233/1/refs/heads/main/yinyong.js, requires-body=true, tag=移除个人微博详情页广告
 http-response ^https:\/\/api\.weibo\.cn\/2\/friendships\/(?:create|destroy) script-path=https://raw.githubusercontent.com/hooped1112233/1/refs/heads/main/yinyong.js, requires-body=true, tag=移除关注、取消关注弹窗
@@ -20,7 +18,6 @@ http-response ^https:\/\/api\.weibo\.cn\/2\/video\/(?:full_screen_stream|tiny_st
 http-response ^https:\/\/api\.weibo\.cn\/2\/!\/huati\/discovery_home_bottom_channels\? script-path=https://raw.githubusercontent.com/hooped1112233/1/refs/heads/main/yinyong.js, requires-body=true, tag=移除超话顶部标签
 http-response ^https:\/\/api\.weibo\.cn\/2\/direct_messages\/user_list\? script-path=https://raw.githubusercontent.com/hooped1112233/1/refs/heads/main/yinyong.js, requires-body=true, tag=移除消息页列表广告
 http-response ^https:\/\/api\.weibo\.cn\/2\/messageflow\/notice\? script-path=https://raw.githubusercontent.com/hooped1112233/1/refs/heads/main/yinyong.js, requires-body=true, tag=移除消息页提醒
-http-response ^https:\/\/api\.weibo\.cn\/2\/search\/(?:container_timeline|finder) script-path=https://raw.githubusercontent.com/hooped1112233/1/refs/heads/main/yinyong.js, requires-body=true, tag=移除热门微博信息流广告
 http-response ^https:\/\/api\.weibo\.cn\/2\/searchall\? script-path=https://raw.githubusercontent.com/hooped1112233/1/refs/heads/main/yinyong.js, requires-body=true, tag=移除发现页搜索结果广告
 http-response ^https:\/\/bootpreload\.uve\.weibo\.com\/v[12]\/ad\/preload script-path=https://raw.githubusercontent.com/hooped1112233/1/refs/heads/main/yinyong.js, requires-body=true, tag=移除开屏广告 preload
 http-response ^https:\/\/sdkapp\.uve\.weibo\.com\/interface\/sdk\/sdkad\.php script-path=https://raw.githubusercontent.com/hooped1112233/1/refs/heads/main/yinyong.js, requires-body=true, tag=移除开屏广告 sdkad
