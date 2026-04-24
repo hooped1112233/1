@@ -1,8 +1,6 @@
-#!name=微博去广告&净化（终极版：无Tab+评论转发屏蔽+增强开屏）
-#!desc=去广告 + 屏蔽评论区 + 屏蔽转发区 + 增强开屏广告清理
-#!author=奶思 + 修改
-#!homepage=https://github.com/fmz200/wool_scripts
-#!icon=https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/apps/Weibo-00.png
+#!name=微博去广告&净化
+#!desc=（终极整合版）
+#!author=奶思 + 修改整合
 #!category=奶思的模块
 
 #############################################
@@ -17,102 +15,73 @@ DOMAIN, bootpreload.uve.weibo.com, REJECT
 DOMAIN-SUFFIX, fastimage.uve.weibo.com, REJECT
 DOMAIN-SUFFIX, adimg.vue.weibo.com, REJECT
 DOMAIN-SUFFIX, zymo.mps.weibo.com, REJECT
-DOMAIN-SUFFIX, weibomingzi.com, REJECT
 DOMAIN-SUFFIX, sdkapp.uve.weibo.com, REJECT
 DOMAIN-SUFFIX, promote.biz.weibo.cn, REJECT
 DOMAIN-SUFFIX, gw5.push.mcp.weibo.cn, REJECT
 DOMAIN-SUFFIX, gw6.push.mcp.weibo.cn, REJECT
-DOMAIN-SUFFIX, game.weibo.cn, REJECT
 DOMAIN-SUFFIX, adimg.uve.weibo.com, REJECT
-DOMAIN-SUFFIX, game.weibo.com, REJECT
-DOMAIN-SUFFIX, ads.viber.com, REJECT
-DOMAIN-SUFFIX, ads-d.viber.com, REJECT
-DOMAIN-SUFFIX, ads.aws.viber.com, REJECT
 DOMAIN-SUFFIX, alitui.weibo.com, REJECT
-DOMAIN-SUFFIX, dp.im.weibo.cn, REJECT
-DOMAIN-SUFFIX, biz.weibo.com.cn, REJECT
 DOMAIN-SUFFIX, click.uve.weibo.com, REJECT
-DOMAIN-SUFFIX, wax.weibo.com, REJECT
 DOMAIN-SUFFIX, wbapp.uve.weibo.com, REJECT
-DOMAIN-SUFFIX, widget.weibo.com, REJECT
 DOMAIN-SUFFIX, dsp.edm.weibo.cn, REJECT
-DOMAIN-SUFFIX, alitui.weibo.com.cn, REJECT
-DOMAIN-SUFFIX, tui.weibo.com, REJECT
-DOMAIN-SUFFIX, wax.weibo.com.cn, REJECT
 DOMAIN-SUFFIX, ad.weibo.com, REJECT
 
 DOMAIN, datacollection.uve.weibo.com, REJECT
-DOMAIN, adpinpai.video.weibocdn.com, REJECT
 
 #############################################
 
 [Rewrite]
-# 热门推荐
-^https?:\/\/api\.weibo\.c(n|om)\/\d\/(cardlist\?v_f=\d|ad\/weibointl\?) reject-dict
-^https?:\/\/weibointl\.api\.weibo\.c(n|om)\/portal\.php\?a=hot_search_users reject-dict
+# 推荐流
+^https?:\/\/api\.weibo\.c(n|om)\/\d\/(cardlist|ad\/weibointl) reject-dict
 
 # 轻享版
 ^https?:\/\/weibointl\.api\.weibo\.cn\/portal\.php\?a=get_searching_info reject-dict
 ^https?:\/\/weibointl\.api\.weibo\.cn\/portal\.php\?a=trends& response-body-json-jq 'del(.data.banner)'
-^https?:\/\/weibointl\.api\.weibo\.c(n|om)\/portal\.php\?a=treehole&auth= reject-dict
 
 # tips
 ^https?:\/\/m?api\.weibo\.c(n|om)\/\d/push\/daily reject-dict
-^https?:\/\/m?api\.weibo\.c(n|om)\/2\/!\/huati\/(discovery_home_bottom_getdotinfo|mobile_discovery_searchchange)\? reject-dict
-
-# 开屏广告（基础拦截）
-^https?:\/\/bootrealtime\.uve\.weibo\.com\/v\d\/ad\/realtime reject-dict
-
-# 长文章广告
-^https:\/\/card\.weibo\.com\/article\/m\/aj\/(reward|uvead)\? reject-dict
-^https:\/\/weibo\.com\/ttarticle\/x\/m\/aj\/(reward|uvead)\? reject-dict
 
 # 搜索净化
 ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/cardlist\? response-body-json-jq 'del(.items[] | select(.category == "group"))'
 
-# ===== 屏蔽评论区 =====
+# ===== 评论区 =====
 ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/comments\/mix_comments\? reject-dict
 ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/(container_detail_comment|container_detail_mix)\? reject-dict
 
-# ===== 屏蔽转发区 =====
+# ===== 转发区 =====
 ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_forward\? reject-dict
 ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/repost_timeline\? reject-dict
 
 #############################################
 
 [Script]
-# ⭐ 新增：更强开屏广告清理（你提供的）
-http-response ^https:\/\/bootpreload\.uve\.weibo\.com\/v[12]\/ad\/preload script-path=https://kelee.one/Resource/JavaScript/Weibo/Weibo_remove_ads.js, requires-body=true, timeout=20, tag=移除开屏广告 preload
+############### ⭐ kelee增强（优先）###############
+
+# 开屏广告
+http-response ^https:\/\/bootpreload\.uve\.weibo\.com\/v[12]\/ad\/preload script-path=https://kelee.one/Resource/JavaScript/Weibo/Weibo_remove_ads.js, requires-body=true, timeout=20
+
+http-response ^https:\/\/sdkapp\.uve\.weibo\.com\/interface\/sdk\/sdkad\.php script-path=https://kelee.one/Resource/JavaScript/Weibo/Weibo_remove_ads.js, requires-body=true, timeout=20
+
+http-response ^https:\/\/wbapp\.uve\.weibo\.com\/(?:preload\/get_ad|wbapplua\/wbpullad\.lua) script-path=https://kelee.one/Resource/JavaScript/Weibo/Weibo_remove_ads.js, requires-body=true, timeout=20
+
+# 个人主页广告
+http-response ^https:\/\/api\.weibo\.cn\/2\/profile\/(?:container_timeline|dealatt|me|statuses\/tab|userinfo) script-path=https://kelee.one/Resource/JavaScript/Weibo/Weibo_remove_ads.js, requires-body=true, timeout=20
+
+# 关注弹窗
+http-response ^https:\/\/api\.weibo\.cn\/2\/friendships\/(?:create|destroy) script-path=https://kelee.one/Resource/JavaScript/Weibo/Weibo_remove_ads.js, requires-body=true, timeout=20
+
+############### 原版核心净化 ###############
 
 # 发现页
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/search\/(finder|container_timeline|container_discover)\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/search\/(finder|container_discover)\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true
 
 # 热搜
 http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/(page|flowpage)\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true
 
-# 话题
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/searchall\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true
-
-# 超话
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_timeline_topicpage\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true
-
-# 详情
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/(extend|container_detail)\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true
-
 # 主净化
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)/2/(cardlist|searchall|page|messageflow|statuses/(unread_)?friends(/|_)timeline|groups/timeline|statuses/(container_timeline|container_timeline_hot|unread_hot_timeline|extend|video_mixtimeline)|profile/(me|container_timeline)|video/(community_tab|remind_info|tiny_stream_video_list)|checkin/show|(\!/)?live/media_homelist|comments/build_comments|container/get_item) script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_main.js, requires-body=true
-
-# 启动广告补充
-http-response ^https?:\/\/(sdk|wb)app\.uve\.weibo\.com(/interface/sdk/sdkad.php|/wbapplua/wbpullad.lua) script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_launch.js, requires-body=true
-
-# 皮肤
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/!\/client\/light_skin script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_main.js, requires-body=true
-http-response ^https?:\/\/new\.vip\.weibo\.c(n|om)\/littleskin\/preview script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_main.js, requires-body=true
-
-# 图标
-http-response ^https?:\/\/new\.vip\.weibo\.c(n|om)\/aj\/appicon\/list script-path=https://github.com/fmz200/wool_scripts/raw/main/Scripts/weibo/weibo_vip.js, requires-body=true
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)/2/(cardlist|searchall|page|statuses/(unread_)?friends(/|_)timeline|groups/timeline|statuses/(container_timeline|container_timeline_hot|unread_hot_timeline|extend|video_mixtimeline)|profile/(me|container_timeline)|video/(community_tab|remind_info|tiny_stream_video_list)) script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_main.js, requires-body=true
 
 #############################################
 
 [MITM]
-hostname = *.weibo.cn, *.weibo.com, api.weibo.cn, mapi.weibo.com, *.uve.weibo.com, new.vip.weibo.cn, sdkapp.uve.weibo.com
+hostname = *.weibo.cn, *.weibo.com, api.weibo.cn, mapi.weibo.com, *.uve.weibo.com, sdkapp.uve.weibo.com, wbapp.uve.weibo.com
