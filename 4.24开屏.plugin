@@ -1,7 +1,6 @@
 #!name=微博去广告&净化（指定11个账号屏蔽评论转发版）
 #!desc=去广告 + 仅屏蔽指定11个账号的评论区/转发区，其他账号正常显示
-#!author=奶思 + 修改
-#!homepage=https://github.com/fmz200/wool_scripts
+#!author=修改
 #!icon=https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/apps/Weibo-00.png
 
 [Rule]
@@ -59,8 +58,8 @@ DOMAIN, adpinpai.video.weibocdn.com, REJECT
 ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/cardlist\? response-body-json-jq 'del(.items[] | select(.category == "group"))'
 
 [Script]
-# 屏蔽指定11个账号的评论区和转发区（核心功能）
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/(comments\/mix_comments|statuses\/(container_detail_comment|container_detail_mix|container_detail_forward|repost_timeline))\? script-path=https://raw.githubusercontent.com/hooped1112233/1/refs/heads/main/weibo_block.js, requires-body=true, tag=微博-屏蔽指定账号
+# 屏蔽指定11个账号的评论区和转发区
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/(comments\/mix_comments|statuses\/(container_detail_comment|container_detail_mix|container_detail_forward|repost_timeline))\? script-path=https://raw.githubusercontent.com/hooped1112233/1/refs/heads/main/weibo_block.js, requires-body=true, requires-header=true, tag=微博-屏蔽指定账号
 
 # 发现页广告
 http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/search\/(finder|container_timeline|container_discover)\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true
