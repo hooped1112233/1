@@ -1,88 +1,118 @@
-#!name=微博去广告&净化（完整版：无Tab过滤+屏蔽评论转发+kelee增强+指定账号屏蔽）
-#!desc=去广告 + 屏蔽评论区 + 屏蔽转发区 + kelee开屏增强 + 屏蔽指定账号评论和转发
-#!author=奶思 + 修改
+#!name=微博去广告&净化
+#!desc=去除常见的广告和部分多余的模块
+#!author=奶思[https://github.com/fmz200]
 #!homepage=https://github.com/fmz200/wool_scripts
 #!icon=https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/apps/Weibo-00.png
 #!raw-url=https://github.com/fmz200/wool_scripts/raw/main/Loon/plugin/weibo.plugin
+#!tg-channel=https://t.me/inaisi
 #!category=奶思的模块
-
+#!tag = 去广告, 微博, fmz200
+#!system = iOS, iPadOS
+#!system_version = 
+#!loon_version = 
+#!date=2025-12-16 21:33:23
 #############################################
+# > "reject"        策略返回 HTTP 状态码 404,不附带任何额外内容
+# > "reject-200"    策略返回 HTTP 状态码 200,不附带任何额外内容
+# > "reject-img"    策略返回 HTTP 状态码 200,同时附带 1px gif
+# > "reject-dict"   策略返回 HTTP 状态码 200,同时附带一个空的 JSON 对象
+# > "reject-array"  策略返回 HTTP 状态码 200,同时附带一个空的 JSON 数组
+# > "reject-drop"   拒绝并丢弃请求，且不会返回任何响应。
+#############################################
+
 [Rule]
-# 屏蔽广告、收集日志、屏蔽开屏广告等常见广告
+# 收集用户信息，上传用户日志的请求
 URL-REGEX, ^https?:\/\/api\.weibo\.cn\/2\/(push\/active|client\/addlog_batch|ad\/preload), REJECT-DROP
 URL-REGEX, ^https?:\/\/api-cloudim\.api\.weibo\.com\/v1\/log\/, REJECT-DROP
 
+# 微博开屏广告
 DOMAIN-SUFFIX, biz.weibo.com, REJECT
 DOMAIN, bootpreload.uve.weibo.com, REJECT
-
+# 其他广告
 DOMAIN-SUFFIX, fastimage.uve.weibo.com, REJECT
 DOMAIN-SUFFIX, adimg.vue.weibo.com, REJECT
 DOMAIN-SUFFIX, zymo.mps.weibo.com, REJECT
+DOMAIN-SUFFIX, weibomingzi.com, REJECT
 DOMAIN-SUFFIX, sdkapp.uve.weibo.com, REJECT
 DOMAIN-SUFFIX, promote.biz.weibo.cn, REJECT
 DOMAIN-SUFFIX, gw5.push.mcp.weibo.cn, REJECT
 DOMAIN-SUFFIX, gw6.push.mcp.weibo.cn, REJECT
+DOMAIN-SUFFIX, game.weibo.cn, REJECT
 DOMAIN-SUFFIX, adimg.uve.weibo.com, REJECT
+DOMAIN-SUFFIX, game.weibo.com, REJECT
+DOMAIN-SUFFIX, ads.viber.com, REJECT
+DOMAIN-SUFFIX, ads-d.viber.com, REJECT
+DOMAIN-SUFFIX, ads.aws.viber.com, REJECT
 DOMAIN-SUFFIX, alitui.weibo.com, REJECT
+DOMAIN-SUFFIX, dp.im.weibo.cn, REJECT
+DOMAIN-SUFFIX, biz.weibo.com.cn, REJECT
 DOMAIN-SUFFIX, click.uve.weibo.com, REJECT
+DOMAIN-SUFFIX, wax.weibo.com, REJECT
 DOMAIN-SUFFIX, wbapp.uve.weibo.com, REJECT
+DOMAIN-SUFFIX, widget.weibo.com, REJECT
 DOMAIN-SUFFIX, dsp.edm.weibo.cn, REJECT
+DOMAIN-SUFFIX, alitui.weibo.com.cn, REJECT
+DOMAIN-SUFFIX, tui.weibo.com, REJECT
+DOMAIN-SUFFIX, wax.weibo.com.cn, REJECT
 DOMAIN-SUFFIX, ad.weibo.com, REJECT
-
+# 屏蔽信息收集
 DOMAIN, datacollection.uve.weibo.com, REJECT
 DOMAIN, adpinpai.video.weibocdn.com, REJECT
 
-# 屏蔽指定账号评论和转发（通过UID）
-# 这些规则用于屏蔽你指定的账号（通过UID）下的评论和转发区
-
-# 大白糖film - UID: 7925005096
-^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_comment\?uid=7925005096 reject-dict
-^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/repost_timeline\?uid=7925005096 reject-dict
-
-# 账号 2788092855
-^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_comment\?uid=2788092855 reject-dict
-^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/repost_timeline\?uid=2788092855 reject-dict
-
-# 账号 6910476762
-^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_comment\?uid=6910476762 reject-dict
-^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/repost_timeline\?uid=6910476762 reject-dict
-
-# 账号 2786743450
-^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_comment\?uid=2786743450 reject-dict
-^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/repost_timeline\?uid=2786743450 reject-dict
-
-# 账号 7952241599
-^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_comment\?uid=7952241599 reject-dict
-^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/repost_timeline\?uid=7952241599 reject-dict
-
-# 放牧某某某x - UID: 6487833349
-^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_comment\?uid=6487833349 reject-dict
-^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/repost_timeline\?uid=6487833349 reject-dict
-
-# 账号 2670855470
-^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_comment\?uid=2670855470 reject-dict
-^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/repost_timeline\?uid=2670855470 reject-dict
-
-# 账号 1769011094
-^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_comment\?uid=1769011094 reject-dict
-^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/repost_timeline\?uid=1769011094 reject-dict
-
-# 账号 3964876137
-^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_comment\?uid=3964876137 reject-dict
-^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/repost_timeline\?uid=3964876137 reject-dict
-
-#############################################
-# 开屏广告（基础）
+[Rewrite]
+# 热门视频 | 热推荐
+^https?:\/\/api\.weibo\.c(n|om)\/\d\/(cardlist\?v_f=\d|ad\/weibointl\?) reject-dict
+^https?:\/\/weibointl\.api\.weibo\.c(n|om)\/portal\.php\?a=hot_search_users reject-dict
+# 微博轻享版热搜词
+^https?:\/\/weibointl\.api\.weibo\.cn\/portal\.php\?a=get_searching_info reject-dict
+# 微博轻享版banner广告
+^https?:\/\/weibointl\.api\.weibo\.cn\/portal\.php\?a=trends& response-body-json-jq 'del(.data.banner)'
+# 私信中绿洲的擦边诱导推广
+^https?:\/\/weibointl\.api\.weibo\.c(n|om)\/portal\.php\?a=treehole&auth= reject-dict
+# 屏蔽首页左上角每日的弹窗tips
+^https?:\/\/m?api\.weibo\.c(n|om)\/\d/push\/daily reject-dict
+# 超话按钮的提示
+^https?:\/\/m?api\.weibo\.c(n|om)\/2\/!\/huati\/(discovery_home_bottom_getdotinfo|mobile_discovery_searchchange)\? reject-dict
+# 开屏广告
 ^https?:\/\/bootrealtime\.uve\.weibo\.com\/v\d\/ad\/realtime reject-dict
 ^https?:\/\/bootpreload\.uve\.weibo\.com\/v\d\/ad\/preload reject-dict
+^https?:\/\/sdkapp\.uve\.weibo\.com\/interface\/sdk\/(get-lbs-cell-info\.php|sdkconfig\.php) REJECT
+# 微博长文章推广
+^https:\/\/card\.weibo\.com\/article\/m\/aj\/(reward|uvead)\? reject-dict
+^https:\/\/weibo\.com\/ttarticle\/x\/m\/aj\/(reward|uvead)\? reject-dict
+# 微博
+^https?:\/\/m?api\.weibo\.c(n|om)\/2\/!\/huati\/discovery_home_bottom_channels reject-dict
+^https?:\/\/m?api\.weibo\.c(n|om)\/2\/!\/chaohua\/discovery\/home_bottom\/switch reject-dict
+^https?:\/\/m?api\.weibo\.c(n|om)\/2\/!\/was\/finder\/searchbarchange\? reject-dict
+^https?:\/\/m?api\.weibo\.c(n|om)\/2\/logservice\/service\? reject
+^https?:\/\/m?api\.weibo\.c(n|om)\/2\/push\/info\? reject
+# 搜索页面净化
+^https?:\/\/m?api\.weibo\.c(n|om)\/2\/cardlist\? response-body-json-jq 'del(.items[] | select(.category == "group"))'
 
-#############################################
-# kelee增强开屏（三段已合并）
-http-response ^https:\/\/bootpreload\.uve\.weibo\.com\/v[12]\/ad\/preload script-path=https://kelee.one/Resource/JavaScript/Weibo/Weibo_remove_ads.js, requires-body=true, timeout=20, tag=移除开屏广告 preload
+[Script]
+# 微博移除发现页广告
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/search\/(finder|container_timeline|container_discover)\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=微博移除发现页广告
 
-http-response ^https:\/\/sdkapp\.uve\.weibo\.com\/interface\/sdk\/sdkad\.php script-path=https://kelee.one/Resource/JavaScript/Weibo/Weibo_remove_ads.js, requires-body=true, timeout=20, tag=移除开屏广告 sdkad
+# 微博热搜页面广告
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/(page|flowpage)\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=微博热搜页面广告
 
-http-response ^https:\/\/wbapp\.uve\.weibo\.com\/(?:preload\/get_ad|wbapplua\/wbpullad\.lua) script-path=https://kelee.one/Resource/JavaScript/Weibo/Weibo_remove_ads.js, requires-body=true, timeout=20, tag=移除开屏广告 wbapplua
+# 微博话题页面广告
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/searchall\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=微博话题页面广告
 
-#############################################
-# 其他脚本
+# 微博超话页面广告
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_timeline_topicpage\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=微博超话页面广告
+
+# 微博超话tab页净化
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_timeline_topic\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=微博超话tab页净化
+
+# 微博详情页面广告
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/extend\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=微博详情页面广告
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=微博详情页面广告
+
+# 屏蔽特定账号的评论区和转发区
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_comment\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽评论区
+
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_forward\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽转发区
+
+[MITM]
+hostname = *.weibo.cn, *.weibo.com, weibo.com
