@@ -1,6 +1,6 @@
-#!name=微博去广告&净化（完整版：无Tab过滤+屏蔽评论转发）
-#!desc=去广告 + 屏蔽评论区 + 屏蔽转发区
-#!author=奶思 + 修改
+#!name=微博屏蔽转发评论区
+#!desc=去广告
+#!author=茶
 #!homepage=https://github.com/fmz200/wool_scripts
 #!icon=https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/apps/Weibo-00.png
 #!raw-url=https://github.com/fmz200/wool_scripts/raw/main/Loon/plugin/weibo.plugin
