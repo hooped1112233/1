@@ -9,7 +9,8 @@ const BLOCKED_UIDS = new Set([
   "2670855470",
   "1769011094",
   "3964876137"
-  // 这里添加"大白糖film"和"放牧某某汪x"的数字uid
+  "3349262214"
+  "5737015304"
 ]);
 
 let body = $response.body;
