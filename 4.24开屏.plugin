@@ -1,5 +1,5 @@
-#!name=微博去广告&净化1
-#!desc=去除常见的广告和部分多余的模块
+#!name=微博
+#!desc=测试
 #!author=奶思[https://github.com/fmz200]
 #!homepage=https://github.com/fmz200/wool_scripts
 #!icon=https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/apps/Weibo-00.png
@@ -90,39 +90,52 @@ DOMAIN, adpinpai.video.weibocdn.com, REJECT
 ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/cardlist\? response-body-json-jq 'del(.items[] | select(.category == "group"))'
 
 [Script]
-# 微博移除发现页广告
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/search\/(finder|container_timeline|container_discover)\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=微博移除发现页广告
+# 屏蔽指定账号的转发区和评论区
+# 为以下每个账号添加对应的屏蔽规则：
 
-# 微博热搜页面广告
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/(page|flowpage)\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=微博热搜页面广告
+# 大白糖film
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_comment\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽大白糖film评论区
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_forward\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽大白糖film转发区
 
-# 微博话题页面广告
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/searchall\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=微博话题页面广告
+# 7925005096
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_comment\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽7925005096评论区
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_forward\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽7925005096转发区
 
-# 微博超话页面广告
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_timeline_topicpage\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=微博超话页面广告
+# 2788092855
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_comment\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽2788092855评论区
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_forward\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽2788092855转发区
 
-# 微博超话tab页净化
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_timeline_topic\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=微博超话tab页净化
+# 6910476762
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_comment\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽6910476762评论区
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_forward\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽6910476762转发区
 
-# 微博详情页面广告
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/extend\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=微博详情页面广告
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=微博详情页面广告
+# 2786743450
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_comment\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽2786743450评论区
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_forward\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽2786743450转发区
 
-# 微博最顶部的tab页分组
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/groups\/allgroups\/v2 script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=微博最顶部的tab页分组, enable={MainTabFilter}
+# 7952241599
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_comment\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽7952241599评论区
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_forward\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽7952241599转发区
 
-# 微博评论区广告
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/comments\/mix_comments\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=微博评论区广告
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/(container_detail_comment|container_detail_mix)\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=微博评论区广告
+# 放牧某某x
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_comment\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽放牧某某x评论区
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_forward\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽放牧某某x转发区
 
-# 微博转发区广告
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_forward\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=微博转发区广告
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/repost_timeline\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_main.js, requires-body=true, timeout=60, tag=微博转发区广告
+# 6487833349
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_comment\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽6487833349评论区
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_forward\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽6487833349转发区
 
-# 微博去广告以及去除各部分推广模块 - cherish
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)/2/(cardlist|searchall|page|messageflow|statuses/(unread_)?friends(/|_)timeline|groups/timeline|statuses/(container_timeline|container_timeline_hot|unread_hot_timeline|extend|video_mixtimeline)|profile/(me|container_timeline)|video/(community_tab|remind_info|tiny_stream_video_list)|checkin/show|(\!/)?live/media_homelist|comments/build_comments|container/get_item) script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_main.js, requires-body=true, timeout=60, tag=微博去广告以及去除各部分推广模块
-http-response ^https?:\/\/(sdk|wb)app\.uve\.weibo\.com(/interface/sdk/sdkad.php|/wbapplua/wbpullad.lua) script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_launch.js, requires-body=true, timeout=60, tag=微博去广告以及去除各部分推广模块
+# 2670855470
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_comment\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽2670855470评论区
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_forward\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽2670855470转发区
+
+# 1769011094
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_comment\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽1769011094评论区
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_forward\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽1769011094转发区
+
+# 3964876137
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_comment\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽3964876137评论区
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_forward\? script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_filter.js, requires-body=true, timeout=60, tag=屏蔽3964876137转发区
 
 [MITM] 
 # hostname = api.weibo.cn, mapi.weibo.com, *.uve.weibo.com, new.vip.weibo.cn, *api.weibo.cn, sdkapp.uve.weibo.com 
