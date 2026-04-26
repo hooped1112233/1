@@ -1,0 +1,55 @@
+#!name=微博去广告&净化(hooped私人定制版)
+#!desc=1.转发区广告修复 2.屏蔽他人主页关注按钮 3.超话净化。基于 hooped 个人仓库脚本。
+#!author=fmz200 & zmqcherish
+#!icon=https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/apps/Weibo-00.png
+#!date=2026-04-26
+
+[Rule]
+DOMAIN-SUFFIX, uve.weibo.com, DIRECT
+URL-REGEX, ^https?:\/\/api\.weibo\.cn\/2\/(push\/active|client\/addlog_batch|ad\/preload), REJECT-DROP
+URL-REGEX, ^https?:\/\/api-cloudim\.api\.weibo\.com\/v1\/log\/, REJECT-DROP
+DOMAIN, huodong.weibo.cn, REJECT
+DOMAIN, bootpreload.uve.weibo.com, REJECT
+DOMAIN-SUFFIX, biz.weibo.com, REJECT
+DOMAIN-SUFFIX, sdkapp.uve.weibo.com, REJECT
+
+[Rewrite]
+# 基础重写
+^https?:\/\/api\.weibo\.c(n|om)\/\d\/(cardlist\?v_f=\d|ad\/weibointl\?) reject-dict
+^https?:\/\/weibointl\.api\.weibo\.cn\/portal\.php\?a=(hot_search_users|get_searching_info) reject-dict
+^https:\/\/card\.weibo\.com\/article\/m\/aj\/(?:reward|uvead) reject-dict
+
+[Script]
+# ==========================================
+# 1. 转发/超话/评论区 (使用 weibo_ads.js)
+# ==========================================
+# 转发区核心修复
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_forward\? script-path=https://raw.githubusercontent.com/hooped1112233/2/main/weibo_ads.js, requires-body=true, timeout=60, tag=微博_转发区修复
+
+# 超话净化
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_timeline_topic(page)?\? script-path=https://raw.githubusercontent.com/hooped1112233/2/main/weibo_ads.js, requires-body=true, timeout=60, tag=微博_超话
+
+# 评论区/详情页
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/(container_detail_comment|container_detail_mix|extend|container_detail)\? script-path=https://raw.githubusercontent.com/hooped1112233/2/main/weibo_ads.js, requires-body=true, timeout=60, tag=微博_详情评论
+
+# ==========================================
+# 2. 首页/个人主页/屏蔽关注按钮 (使用 weibo_main2.js)
+# ==========================================
+# 首页信息流与转发流
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/(statuses\/(container_timeline|repost_timeline)|groups\/timeline) script-path=https://raw.githubusercontent.com/hooped1112233/2/main/weibo_main2.js, requires-body=true, timeout=60, tag=微博_信息流
+
+# 个人主页（屏蔽关注按钮的关键）
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/profile\/(me|container_timeline) script-path=https://raw.githubusercontent.com/hooped1112233/2/main/weibo_main2.js, requires-body=true, timeout=60, tag=微博_个人主页
+
+# 搜索发现页净化
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/search\/(finder|container_timeline|container_discover) script-path=https://raw.githubusercontent.com/hooped1112233/2/main/weibo_main2.js, requires-body=true, timeout=60, tag=微博_发现页
+
+# ==========================================
+# 3. 皮肤与功能配置 (使用 weibo_main2.js)
+# ==========================================
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/!\/client\/light_skin script-path=https://raw.githubusercontent.com/hooped1112233/2/main/weibo_main2.js, requires-body=true, tag=微博_皮肤
+# 运行配置脚本（此项用于写入设置，可偶尔开启更新配置）
+# http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/user_timeline script-path=https://raw.githubusercontent.com/hooped1112233/2/main/weibo_config.js, requires-body=false, tag=微博_写入配置
+
+[MITM]
+hostname = *.weibo.cn, *.weibo.com, weibo.com, api.weibo.cn, mapi.weibo.com, *.uve.weibo.com
