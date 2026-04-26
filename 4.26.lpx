@@ -1,22 +1,19 @@
-#!name=微博去广告&净化(全局屏蔽关注版)
-#!desc=修复转发区广告，移除开屏，全局屏蔽“最近访问”及“他人主页”的关注按钮。
+#!name=微博去广告&净化(关注按钮修复版)
+#!desc=通过调整脚本作用域，修复转发区广告并尝试强制屏蔽个人主页关注按钮。
 #!author=fmz200 & RuCu6
 #!icon=https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/apps/Weibo-00.png
 #!date=2026-04-26
 
 [Rule]
-# 基础放行与拦截
 DOMAIN-SUFFIX, uve.weibo.com, DIRECT
 URL-REGEX, ^https?:\/\/api\.weibo\.cn\/2\/(push\/active|client\/addlog_batch|ad\/preload), REJECT-DROP
 URL-REGEX, ^https?:\/\/api-cloudim\.api\.weibo\.com\/v1\/log\/, REJECT-DROP
 DOMAIN, huodong.weibo.cn, REJECT
 DOMAIN, bootpreload.uve.weibo.com, REJECT
 DOMAIN-SUFFIX, biz.weibo.com, REJECT
-DOMAIN-SUFFIX, fastimage.uve.weibo.com, REJECT
 DOMAIN-SUFFIX, sdkapp.uve.weibo.com, REJECT
 
 [Rewrite]
-# 基础净化
 ^https?:\/\/api\.weibo\.c(n|om)\/\d\/(cardlist\?v_f=\d|ad\/weibointl\?) reject-dict
 ^https?:\/\/weibointl\.api\.weibo\.cn\/portal\.php\?a=(hot_search_users|get_searching_info) reject-dict
 ^https:\/\/bootrealtime\.uve\.weibo\.com\/v[23]\/ad\/realtime reject-dict
@@ -25,28 +22,30 @@ DOMAIN-SUFFIX, sdkapp.uve.weibo.com, REJECT
 
 [Script]
 # ==========================================
-# 1. 核心净化：他人主页/最近访问/屏蔽关注 (使用配置二脚本)
+# 1. 转发/主页/信息流/关注按钮 - 统一使用【第一个配置】脚本
 # ==========================================
-# 这里的 container_timeline 和 userinfo 是进入他人主页的核心接口，脚本会在此抹除关注按钮
-http-response ^https:\/\/api\.weibo\.cn\/2\/profile\/(?:container_timeline|dealatt|me|statuses\/tab|userinfo) script-path=https://rucu6.pages.dev/Scripts/weibo.js, requires-body=true, tag=主页及关注按钮屏蔽
-
-# 移除关注/取消关注时的动作弹窗
-http-response ^https:\/\/api\.weibo\.cn\/2\/friendships\/(?:create|destroy) script-path=https://rucu6.pages.dev/Scripts/weibo.js, requires-body=true, tag=移除关注动作弹窗
-
-# ==========================================
-# 2. 转发/详情/评论/超话 - 使用【第一个配置】脚本 (修复广告)
-# ==========================================
+# 转发区净化 (修复你之前的广告问题)
 http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_detail_forward\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=转发区1
 http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/repost_timeline\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_main.js, requires-body=true, timeout=60, tag=转发区2
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/(extend|container_detail|container_detail_comment|container_detail_mix)\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=详情评论
-http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/container_timeline_topic(page)?\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=超话净化
+
+# 个人主页/最近访问/信息流 (核心：使用奶思脚本以获得更强屏蔽)
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)/2/(cardlist|page|profile/(me|container_timeline|userinfo)|statuses/(container_timeline|extend|container_detail|container_detail_comment)) script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_main.js, requires-body=true, timeout=60, tag=主页及信息流净化
+
+# 详情页与评论区
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/statuses\/(container_detail_mix|container_detail_comment)\? script-path=https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/weibo/weibo_ads.js, requires-body=true, timeout=60, tag=详情评论
 
 # ==========================================
-# 3. 其他功能 (开屏、基础、会员)
+# 2. 关注弹窗/开屏/会员图标 - 使用【第二个配置】脚本
 # ==========================================
+# 移除关注/取消关注时的弹窗 (RuCu6 强项)
+http-response ^https:\/\/api\.weibo\.cn\/2\/friendships\/(?:create|destroy) script-path=https://rucu6.pages.dev/Scripts/weibo.js, requires-body=true, tag=移除关注弹窗
+
+# 开屏净化 (RuCu6 强项)
 http-response ^https:\/\/bootpreload\.uve\.weibo\.com\/v[12]\/ad\/preload script-path=https://rucu6.pages.dev/Scripts/weibo.js, requires-body=true, tag=开屏1
 http-response ^https:\/\/sdkapp\.uve\.weibo\.com\/interface\/sdk\/sdkad\.php script-path=https://rucu6.pages.dev/Scripts/weibo.js, requires-body=true, tag=开屏2
 http-response ^https:\/\/wbapp\.uve\.weibo\.com\/(?:preload\/get_ad|wbapplua\/wbpullad\.lua) script-path=https://rucu6.pages.dev/Scripts/weibo.js, requires-body=true, tag=开屏3
+
+# 基础搜索与会员图标
 http-response ^https:\/\/api\.weibo\.cn\/2\/(?:checkin\/show|client\/publisher_list|searchall\?) script-path=https://rucu6.pages.dev/Scripts/weibo.js, requires-body=true, tag=基础搜索净化
 http-response ^https?:\/\/new\.vip\.weibo\.c(n|om)\/aj\/appicon\/list script-path=https://rucu6.pages.dev/Scripts/weibo.js, requires-body=true, tag=会员图标
 
