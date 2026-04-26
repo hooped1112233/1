@@ -1,0 +1,107 @@
+#!name=微博去广告&净化(整合版)
+#!desc=基于奶思配置基础，整合RuCu6精简规则，移除顶部Tab过滤，强化开屏去广告及关注弹窗移除。
+#!author=fmz200 & RuCu6
+#!icon=https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/apps/Weibo-00.png
+#!date=2026-04-26
+
+[Rule]
+# --- 第二个配置的要求：请求放行 ---
+DOMAIN-SUFFIX, uve.weibo.com, DIRECT
+
+# --- 拦截类规则 ---
+# 收集用户信息，上传用户日志的请求
+URL-REGEX, ^https?:\/\/api\.weibo\.cn\/2\/(push\/active|client\/addlog_batch|ad\/preload), REJECT-DROP
+URL-REGEX, ^https?:\/\/api-cloudim\.api\.weibo\.com\/v1\/log\/, REJECT-DROP
+
+# 微博开屏广告 (整合第二个配置)
+DOMAIN, huodong.weibo.cn, REJECT
+DOMAIN, bootpreload.uve.weibo.com, REJECT
+DOMAIN-SUFFIX, biz.weibo.com, REJECT
+
+# 其他广告域名
+DOMAIN-SUFFIX, fastimage.uve.weibo.com, REJECT
+DOMAIN-SUFFIX, adimg.vue.weibo.com, REJECT
+DOMAIN-SUFFIX, zymo.mps.weibo.com, REJECT
+DOMAIN-SUFFIX, weibomingzi.com, REJECT
+DOMAIN-SUFFIX, sdkapp.uve.weibo.com, REJECT
+DOMAIN-SUFFIX, promote.biz.weibo.cn, REJECT
+DOMAIN-SUFFIX, gw5.push.mcp.weibo.cn, REJECT
+DOMAIN-SUFFIX, gw6.push.mcp.weibo.cn, REJECT
+DOMAIN-SUFFIX, game.weibo.cn, REJECT
+DOMAIN-SUFFIX, adimg.uve.weibo.com, REJECT
+DOMAIN-SUFFIX, game.weibo.com, REJECT
+DOMAIN-SUFFIX, alitui.weibo.com, REJECT
+DOMAIN-SUFFIX, dp.im.weibo.cn, REJECT
+DOMAIN-SUFFIX, biz.weibo.com.cn, REJECT
+DOMAIN-SUFFIX, click.uve.weibo.com, REJECT
+DOMAIN-SUFFIX, wax.weibo.com, REJECT
+DOMAIN-SUFFIX, wbapp.uve.weibo.com, REJECT
+DOMAIN-SUFFIX, widget.weibo.com, REJECT
+DOMAIN-SUFFIX, dsp.edm.weibo.cn, REJECT
+DOMAIN-SUFFIX, alitui.weibo.com.cn, REJECT
+DOMAIN-SUFFIX, tui.weibo.com, REJECT
+DOMAIN-SUFFIX, wax.weibo.com.cn, REJECT
+DOMAIN-SUFFIX, ad.weibo.com, REJECT
+
+# 屏蔽信息收集
+DOMAIN, datacollection.uve.weibo.com, REJECT
+DOMAIN, adpinpai.video.weibocdn.com, REJECT
+
+[Rewrite]
+# --- 基础净化规则 ---
+^https?:\/\/api\.weibo\.c(n|om)\/\d\/(cardlist\?v_f=\d|ad\/weibointl\?) reject-dict
+^https?:\/\/weibointl\.api\.weibo\.c(n|om)\/portal\.php\?a=hot_search_users reject-dict
+^https?:\/\/weibointl\.api\.weibo\.cn\/portal\.php\?a=get_searching_info reject-dict
+^https?:\/\/weibointl\.api\.weibo\.cn\/portal\.php\?a=trends& response-body-json-jq 'del(.data.banner)'
+^https?:\/\/weibointl\.api\.weibo\.c(n|om)\/portal\.php\?a=treehole&auth= reject-dict
+
+# 第二个配置要求的开屏广告精简规则
+^https:\/\/bootrealtime\.uve\.weibo\.com\/v[23]\/ad\/realtime reject-dict
+^https:\/\/sdkapp\.uve\.weibo\.com\/interface\/sdk\/(?:get-lbs-cell-info\.php|sdkconfig\.php) reject-dict
+
+# 屏蔽首页/搜索等组件 (由第二个配置补充)
+^https:\/\/api\.weibo\.cn\/2\/(?:ug\/checkin\/list|push\/daily|push\/info) reject-dict
+^https:\/\/api\.weibo\.cn\/2\/!\/live\/media_homelist\? reject-dict
+^https:\/\/api\.weibo\.cn\/2\/photo\/info\? reject-dict
+^https:\/\/api\.weibo\.cn\/2\/!\/chaohua\/discovery\/home_bottom\/switch\? reject-dict
+^https:\/\/api\.weibo\.cn\/2\/!\/huati\/(?:discovery_home_bottom_getdotinfo|mobile_discovery_searchchange) reject-dict
+
+# 微博长文章推广
+^https:\/\/card\.weibo\.com\/article\/m\/aj\/(?:reward|uvead) reject-dict
+^https:\/\/weibo\.com\/ttarticle\/x\/m\/aj\/(?:reward|uvead) reject-dict
+
+[Script]
+# --- 核心功能 (以第二个配置脚本为准) ---
+
+# 移除首页推广/签到等
+http-response ^https:\/\/api\.weibo\.cn\/2\/(?:checkin\/show|client\/publisher_list|push\/active) script-path=https://rucu6.pages.dev/Scripts/weibo.js, requires-body=true, tag=移除首页推广
+
+# 移除信息流/热搜广告
+http-response ^https:\/\/api\.weibo\.cn\/2\/(?:cardlist|page|searchall|search\/(?:container_timeline|finder)) script-path=https://rucu6.pages.dev/Scripts/weibo.js, requires-body=true, tag=移除信息流广告
+
+# 移除评论区广告
+http-response ^https:\/\/api\.weibo\.cn\/2\/(?:comments\/build_comments|statuses\/(?:comments_expand_child|container_detail_comment)) script-path=https://rucu6.pages.dev/Scripts/weibo.js, requires-body=true, tag=移除评论区广告
+
+# 移除个人主页/详情页广告
+http-response ^https:\/\/api\.weibo\.cn\/2\/(?:profile\/(?:container_timeline|dealatt|me|statuses\/tab|userinfo)|statuses\/(?:container_detail\?|container_timeline(?:_hot|_topic|_topicpage|_unread)?|repost_timeline|unread_hot_timeline|extend|show)) script-path=https://rucu6.pages.dev/Scripts/weibo.js, requires-body=true, tag=移除详情及主页广告
+
+# 移除关注、取消关注弹窗 (第二个配置要求)
+http-response ^https:\/\/api\.weibo\.cn\/2\/friendships\/(?:create|destroy) script-path=https://rucu6.pages.dev/Scripts/weibo.js, requires-body=true, tag=移除关注、取消关注弹窗
+
+# 移除开屏广告脚本 (第二个配置要求)
+http-response ^https:\/\/bootpreload\.uve\.weibo\.com\/v[12]\/ad\/preload script-path=https://rucu6.pages.dev/Scripts/weibo.js, requires-body=true, tag=移除开屏广告 preload
+http-response ^https:\/\/sdkapp\.uve\.weibo\.com\/interface\/sdk\/sdkad\.php script-path=https://rucu6.pages.dev/Scripts/weibo.js, requires-body=true, tag=移除开屏广告 sdkad
+http-response ^https:\/\/wbapp\.uve\.weibo\.com\/(?:preload\/get_ad|wbapplua\/wbpullad\.lua) script-path=https://rucu6.pages.dev/Scripts/weibo.js, requires-body=true, tag=移除开屏广告 wbapplua
+
+# 消息页处理
+http-response ^https:\/\/api\.weibo\.cn\/2\/(?:direct_messages\/user_list|messageflow\/notice) script-path=https://rucu6.pages.dev/Scripts/weibo.js, requires-body=true, tag=移除消息页净化
+
+# 视频流净化
+http-response ^https:\/\/api\.weibo\.cn\/2\/video\/(?:full_screen_stream|tiny_stream_mid_detail|tiny_stream_video_list)\? script-path=https://rucu6.pages.dev/Scripts/weibo.js, requires-body=true, tag=移除视频流广告
+
+# 会员功能/皮肤
+http-response ^https?:\/\/new\.vip\.weibo\.c(n|om)\/aj\/appicon\/list script-path=https://rucu6.pages.dev/Scripts/weibo.js, requires-body=true, tag=解锁微博会员APP图标
+http-response ^https?:\/\/m?api\.weibo\.c(n|om)\/2\/!\/client\/light_skin script-path=https://raw.githubusercontent.com/zmqcherish/proxy-script/main/weibo_main.js, requires-body=true, timeout=60, tag=自定义tab皮肤
+
+[MITM]
+hostname = *.weibo.cn, *.weibo.com, weibo.com, api.weibo.cn, mapi.weibo.com, *.uve.weibo.com, new.vip.weibo.cn
