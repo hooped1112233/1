@@ -1,0 +1,47 @@
+# NAME: Google-Core
+# AUTHOR: 精简自 blackmatrix7
+# 核心谷歌服务域名，适合自用
+
+# 搜索/主服务
+DOMAIN-SUFFIX,google.com
+DOMAIN-SUFFIX,google.com.hk
+DOMAIN-SUFFIX,google.co.jp
+DOMAIN-SUFFIX,google.co.uk
+DOMAIN-SUFFIX,google.de
+DOMAIN-SUFFIX,google.fr
+DOMAIN-SUFFIX,google.com.sg
+
+# 基础设施（必须和搜索同节点，否则封号）
+DOMAIN-SUFFIX,googleapis.com
+DOMAIN-SUFFIX,googleapis.cn
+DOMAIN-SUFFIX,googleusercontent.com
+DOMAIN-SUFFIX,gstatic.com
+DOMAIN-SUFFIX,gstatic.cn
+
+# 账号/邮件
+DOMAIN-SUFFIX,gmail.com
+DOMAIN-SUFFIX,googlemail.com
+DOMAIN-SUFFIX,accounts.google.com
+
+# 云盘
+DOMAIN-SUFFIX,googledrive.com
+DOMAIN-SUFFIX,drive.google.com
+
+# 地图
+DOMAIN-SUFFIX,maps.google.com
+DOMAIN-SUFFIX,googlemaps.com
+
+# 其他常用
+DOMAIN-SUFFIX,googleplay.com
+DOMAIN-SUFFIX,android.com
+DOMAIN-SUFFIX,recaptcha.net
+DOMAIN-SUFFIX,goo.gl
+DOMAIN-SUFFIX,g.co
+DOMAIN-SUFFIX,appspot.com
+DOMAIN-SUFFIX,firebaseapp.com
+DOMAIN-SUFFIX,firebaseio.com
+DOMAIN-SUFFIX,web.app
+
+# 更新/CDN（直连，不放这里，在主配置单独处理）
+# gvt1.com -> DIRECT
+# gvt2.com -> DIRECT
